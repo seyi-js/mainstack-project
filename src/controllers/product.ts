@@ -1,5 +1,12 @@
 import { Request, Response } from 'express';
+import joi from 'joi';
 import { ProductActions } from '../actions/product';
+import {
+  createProductSchema,
+  productUpdateSchema,
+} from '../joi-schema/product';
+import { formatResponse } from '../utils/response';
+import { validateRequest } from '../utils/validateSchema';
 
 export const getAll = async (req: Request, res: Response) => {
   try {
@@ -11,7 +18,6 @@ export const getAll = async (req: Request, res: Response) => {
       res,
     });
   } catch (error) {
-    console.log(error);
     return formatResponse({
       status: 500,
       message: 'Internal Server Error',
@@ -32,7 +38,7 @@ export const create = async (req: Request, res: Response) => {
   } catch (error) {
     return formatResponse({
       status: 500,
-      message: 'Internal Server Error',
+      message: error,
       res,
     });
   }
@@ -62,6 +68,7 @@ export const update = async (req: Request, res: Response) => {
       { _id: req.params.id },
       req.body
     );
+
     return formatResponse({
       data: product,
       status: 200,
@@ -80,6 +87,7 @@ export const update = async (req: Request, res: Response) => {
 export const remove = async (req: Request, res: Response) => {
   try {
     await new ProductActions().deleteOne({ _id: req.params.id });
+
     return formatResponse({
       status: 200,
       message: 'Product deleted successfully.',
@@ -92,21 +100,4 @@ export const remove = async (req: Request, res: Response) => {
       res,
     });
   }
-};
-
-type ResponseType = {
-  data?: any;
-  status: number;
-  message: string;
-  res: Response;
-};
-
-const formatResponse = (payload: ResponseType) => {
-  const { data, status, message } = payload;
-
-  return payload.res.status(payload.status).json({
-    status,
-    message,
-    data,
-  });
 };

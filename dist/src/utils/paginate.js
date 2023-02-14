@@ -17,7 +17,6 @@ const APIQueryFeatures_1 = __importDefault(require("./APIQueryFeatures"));
 const paginate = (query, queryString) => __awaiter(void 0, void 0, void 0, function* () {
     const queryFeature = new APIQueryFeatures_1.default(query, queryString);
     const count = yield queryFeature.count();
-    console.log(count);
     const result = yield queryFeature
         .filter()
         .sort()
